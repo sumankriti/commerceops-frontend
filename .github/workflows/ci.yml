@@ -1,4 +1,3 @@
-
 name: CI
 
 on:
@@ -41,9 +40,10 @@ jobs:
 
       # STEP 5 — Verify formatting
       - name: Check Formatting
-        run: npx nx record -- npx nx format:check --base="origin/main"
+        run:
+          npx nx record -- npx nx format:check --base="origin/main"
 
-            # STEP 6A — ESLint quality gate (zero warnings)
+          # STEP 6A — ESLint quality gate (zero warnings)
       # CHANGE HERE
       - name: ESLint Quality Gate
         run: npx nx run-many -t lint -- --max-warnings=0
@@ -58,7 +58,23 @@ jobs:
       # Functions: 80%, Lines: 80%
       - name: Verify Shell Coverage Quality Gate
         run: npx nx test commerceops-shell --coverage --runInBand --skip-nx-cache
+      # STEP 7B — Products coverage reporting
+      # ADD THIS
+      - name: Generate Products Coverage
+        run: npx nx test commerceops-products --coverage --runInBand --skip-nx-cache
 
+      # STEP 7C — Upload Jest coverage reports
+      # ADD THIS
+      - name: Upload Jest Coverage Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: commerceops-jest-coverage
+          path: |
+            coverage/commerceops-shell/
+            coverage/commerceops-products/
+          if-no-files-found: warn
+          retention-days: 7
       # STEP 8 — Nx Cloud failure analysis
       - name: Nx Cloud CI Fix
         if: always()

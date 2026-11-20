@@ -9,12 +9,20 @@ describe('App', () => {
     }).compileComponents();
   });
 
-  it('should render title', async () => {
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain(
-      'Welcome commerceops-products',
-    );
-  });
+ // CHANGE HERE — Verify the actual Products MFE heading
+it('should render the Products MFE heading', async () => {
+  const fixture = TestBed.createComponent(App);
+
+  fixture.detectChanges();
+  await fixture.whenStable();
+
+  const compiled = fixture.nativeElement as HTMLElement;
+
+  const heading = compiled.querySelector('h2');
+
+  expect(heading).not.toBeNull();
+  expect(heading?.textContent?.trim()).toBe(
+    'Products MFE loaded successfully!',
+  );
+});
 });
