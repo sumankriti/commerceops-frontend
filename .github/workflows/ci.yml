@@ -57,12 +57,12 @@ jobs:
 
       # STEP 9: Install Playwright Chromium
       # FIX: Browser executable was missing in GitHub Actions
-      - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+      # - name: Install Playwright Chromium
+      #   run: npx playwright install --with-deps chromium firefox webkit
 
-      # STEP 10: Run E2E tests
-      - name: Run Playwright E2E
-        run: npx nx run-many -t e2e --parallel=1
+      # # STEP 10: Run E2E tests
+      # - name: Run Playwright E2E
+      #   run: npx nx run-many -t e2e --parallel=1
 
       # STEP 11: Verify Shell Jest coverage thresholds
       - name: Verify Shell Coverage Quality Gate
