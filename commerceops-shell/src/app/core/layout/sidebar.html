@@ -1,0 +1,29 @@
+<aside class="sidebar">
+    <div class="sidebar__brand">
+       <span class="sidebar__logo">C</span>
+       <span>CommerceOps</span>
+    </div>
+
+    <nav aria-label="Main Naviagtion">
+        @for(item of navigation;track item.path;let first = $first){
+            <a class="sidebar__link"
+              #firstNavLink
+            [routerLink]="item.path"
+            routerLinkActive="sidebar-link__active"
+            [routerLinkActiveOptions]="{exact:true}"
+            #active="routerLinkActive"
+            [attr.aria-current]="active.isActive ? 'page':null"
+            (click)="navigationSelected.emit()"
+            >
+             @if (first) {
+                <span #firstNavLink hidden></span>
+              }
+
+            <span class="sidebar__icon" aria-hidden="true">
+                {{ item.icon }}
+            </span>
+            <span>{{ item.label }}</span>
+            </a>
+        }
+    </nav>
+</aside>

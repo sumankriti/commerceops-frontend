@@ -1,0 +1,63 @@
+.sidebar {
+    width: 248px;
+    min-height: 100dvh;
+    padding: 24px 14px;
+    background: var(--co-sidebar-bg);
+    color: var(--co-sidebar-text);
+
+    &__brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 12px 32px;
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    &__logo {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #6366f1;
+      color: white;
+    }
+
+    nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    &__link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: 9px;
+      color: var(--co-sidebar-text);
+      text-decoration: none;
+      transition: background 160ms ease, color 160ms ease;
+
+      &:hover {
+        background: var(--co-sidebar-hover);
+        color: white;
+      }
+
+      &:focus-visible {
+        outline: 2px solid #a5b4fc;
+        outline-offset: 2px;
+      }
+
+      &--active {
+        background: var(--co-sidebar-active);
+        color: white;
+        font-weight: 600;
+      }
+    }
+
+    &__icon {
+      width: 20px;
+      text-align: center;
+    }
+  }

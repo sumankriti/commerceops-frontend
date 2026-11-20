@@ -1,0 +1,33 @@
+<div class="app-shell">
+    @if (isSidebarOpen()) {
+      <button
+        type="button"
+        class="app-shell__backdrop"
+        aria-label="Close navigation"
+        (click)="closeSidebar()"
+      ></button>
+    }
+
+    <div
+     id="commerceops-sidebar"
+      class="app-shell__sidebar"
+      [attr.aria-label]="isSidebarOpen() ? 'Mobile navigation' : null"
+      [attr.aria-modal]="isSidebarOpen() ? 'true' : null"
+      [class.app-shell__sidebar--open]="isSidebarOpen()"
+      [cdkTrapFocus]="isSidebarOpen()"
+  [cdkTrapFocusAutoCapture]="false"
+    >
+     <co-sidebar (navigationSelected)="closeSidebar()" />
+    </div>
+
+    <div class="app-shell__main">
+      <co-header
+        #header
+        [attr.inert]="isSidebarOpen() ? '' : null"
+      (menuToggle)="toggleSidebar()" />
+
+      <main class="app-shell__content">
+        <router-outlet />
+      </main>
+    </div>
+  </div>

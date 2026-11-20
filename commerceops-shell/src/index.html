@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>commerceops-shell</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  </head>
+  <body>
+    <co-root></co-root>
+    <script>
+      (() => {
+        const key = 'commerceops-theme';
+        let preference = 'system';
+
+        try {
+          const saved = localStorage.getItem(key);
+
+          if (['light', 'dark', 'system'].includes(saved)) {
+            preference = saved;
+          }
+        } catch {
+          // Storage may be blocked.
+        }
+
+        const systemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches;
+
+        const resolved =
+          preference === 'system'
+            ? (systemDark ? 'dark' : 'light')
+            : preference;
+
+        document.documentElement.dataset.theme = resolved;
+      })();
+    </script>
+  </body>
+</html>

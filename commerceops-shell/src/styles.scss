@@ -1,0 +1,51 @@
+/* You can add global styles to this file, and also import other style files */
+/* CommerceOps design tokens — light theme */
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --co-bg: #f8fafc;
+  --co-surface: #ffffff;
+  --co-text: #0f172a;
+  --co-text-muted: #64748b;
+  --co-border: #e2e8f0;
+
+  --co-sidebar-bg: #0f172a;
+  --co-sidebar-text: #cbd5e1;
+  --co-sidebar-hover: #1e293b;
+  --co-sidebar-active: #312e81;
+
+  --co-primary: #6366f1;
+  --co-focus: #6366f1;
+}
+
+/* CommerceOps design tokens — dark theme */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --co-bg: #020617;
+  --co-surface: #0f172a;
+  --co-text: #f8fafc;
+  --co-text-muted: #94a3b8;
+  --co-border: #334155;
+
+  --co-sidebar-bg: #020617;
+  --co-sidebar-text: #cbd5e1;
+  --co-sidebar-hover: #1e293b;
+  --co-sidebar-active: #4338ca;
+
+  --co-primary: #818cf8;
+  --co-focus: #a5b4fc;
+}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--co-bg);
+  color: var(--co-text);
+  font-family: Inter, system-ui, sans-serif;
+}

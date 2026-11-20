@@ -1,0 +1,9 @@
+{
+  "name": "commerceops-shell-e2e",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "commerceops-shell-e2e/src",
+  "implicitDependencies": ["commerceops-shell"],
+  "// targets": "to see all targets run: nx show project commerceops-shell-e2e --web",
+  "targets": {}
+}

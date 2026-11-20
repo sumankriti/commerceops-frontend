@@ -48,3 +48,9 @@ Thumbs.db
 .nx/polygraph
 .nx/self-healing
 .nx/migrate-runs
+.angular
+
+# ADD THIS — Additional generated files
+playwright-report/
+test-results/
+.nx/installation/

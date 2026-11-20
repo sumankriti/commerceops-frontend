@@ -1,0 +1,52 @@
+<header class="header">
+  <button
+    #menuButton
+    type="button"
+    class="header__menu"
+    aria-label="Toggle navigation"
+    aria-controls="commerceops-sidebar"
+    [attr.aria-expanded]="isMenuOpen()"
+    (click)="menuToggle.emit()"
+  >
+    <span aria-hidden="true">☰</span>
+  </button>
+  <div class="header__title">
+    <span class="header__eyebrow">Workspace / Overview</span>
+    <h1>Dashboard</h1>
+  </div>
+
+  <div class="header__actions">
+    <button
+      class="header__icon-button"
+      type="button"
+      aria-label="Notifications"
+      disabled
+      title="Notifications coming soon"
+    >
+      <span aria-hidden="true">🔔</span>
+    </button>
+
+    <div class="header__profile">
+      <span class="header__avatar" aria-hidden="true">CO</span>
+      <div class="header__user">
+        <strong>CommerceOps</strong>
+        <span>Administrator</span>
+      </div>
+    </div>
+
+    <div class="header__theme">
+      <label for="commerceops-theme">Theme</label>
+
+      <select
+        id="commerceops-theme"
+        [value]="themeService.theme()"
+        (change)="changeTheme($any($event.target).value)"
+        aria-label="Choose application theme"
+      >
+        <option value="light">☀️ Light</option>
+        <option value="dark">🌙 Dark</option>
+        <option value="system">💻 System</option>
+      </select>
+    </div>
+  </div>
+</header>

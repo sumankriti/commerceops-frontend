@@ -1,3 +1,4 @@
+
 name: CI
 
 on:
@@ -12,29 +13,53 @@ permissions:
 
 jobs:
   main:
+    name: CommerceOps CI
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v5
+      # STEP 1 — Checkout repository
+      - name: Checkout Repository
+        uses: actions/checkout@v5
         with:
           filter: tree:0
           fetch-depth: 0
 
-      # This enables task distribution via Nx Cloud
-      # Run this command as early as possible, before dependencies are installed
-      # Learn more at https://nx.dev/docs/reference/nx-cloud-cli#npx-nxcloud-startcirun
-      - run: npx nx start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e"
+      # STEP 2 — Initialize Nx Cloud distributed execution
+      - name: Initialize Nx Cloud
+        run: npx nx start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e"
 
-      # Cache node_modules
-      - uses: actions/setup-node@v5
+      # STEP 3 — Configure Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
         with:
           node-version: 24
-          cache: 'npm'
+          cache: npm
 
-      - run: npm ci
+      # STEP 4 — Install dependencies
+      - name: Install Dependencies
+        run: npm ci
 
-      # Prepend any command with "nx record --" to record its logs to Nx Cloud
-      - run: npx nx record -- npx nx format:check --base="remotes/origin/main"
-      - run: npx nx run-many -t lint test build typecheck e2e
-      # Nx Cloud recommends fixes for failures to help you get CI green faster. Learn more: https://nx.dev/docs/features/ci-features/self-healing-ci
-      - run: npx nx fix-ci
+      # STEP 5 — Verify formatting
+      - name: Check Formatting
+        run: npx nx record -- npx nx format:check --base="origin/main"
+
+            # STEP 6A — ESLint quality gate (zero warnings)
+      # CHANGE HERE
+      - name: ESLint Quality Gate
+        run: npx nx run-many -t lint -- --max-warnings=0
+
+      # STEP 6B — Remaining Nx quality checks
+      # ADD THIS
+      - name: Run Nx Quality Checks
+        run: npx nx run-many -t test build typecheck e2e
+
+      # STEP 7 — Enforce Shell Jest coverage thresholds
+      # Statements: 80%, Branches: 75%
+      # Functions: 80%, Lines: 80%
+      - name: Verify Shell Coverage Quality Gate
+        run: npx nx test commerceops-shell --coverage --runInBand --skip-nx-cache
+
+      # STEP 8 — Nx Cloud failure analysis
+      - name: Nx Cloud CI Fix
         if: always()
+        run: npx nx fix-ci
