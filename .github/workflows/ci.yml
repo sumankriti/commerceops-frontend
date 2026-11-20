@@ -1,70 +1,78 @@
-name: CI
+name: CommerceOps CI
 
 on:
   push:
     branches:
       - main
   pull_request:
+    branches:
+      - main
 
 permissions:
-  actions: read
   contents: read
 
 jobs:
-  main:
-    name: CommerceOps CI
+  quality:
+    name: CommerceOps Quality Checks
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
-      # STEP 1 — Checkout repository
+      # STEP 1: Checkout repository
       - name: Checkout Repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
-          filter: tree:0
           fetch-depth: 0
 
-      # STEP 2 — Initialize Nx Cloud distributed execution
-      - name: Initialize Nx Cloud
-        run: npx nx start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e"
-
-      # STEP 3 — Configure Node.js
+      # STEP 2: Configure Node.js
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
 
-      # STEP 4 — Install dependencies
+      # STEP 3: Install dependencies
       - name: Install Dependencies
         run: npm ci
 
-      # STEP 5 — Verify formatting
+      # STEP 4: Check formatting
       - name: Check Formatting
-        run:
-          npx nx record -- npx nx format:check --base="origin/main"
+        run: npx nx format:check --base=origin/main --head=HEAD
 
-          # STEP 6A — ESLint quality gate (zero warnings)
-      # CHANGE HERE
+      # STEP 5: Strict ESLint validation
       - name: ESLint Quality Gate
         run: npx nx run-many -t lint -- --max-warnings=0
 
-      # STEP 6B — Remaining Nx quality checks
-      # ADD THIS
-      - name: Run Nx Quality Checks
-        run: npx nx run-many -t test build typecheck e2e
+      # STEP 6: Run Jest unit tests
+      - name: Run Jest Unit Tests
+        run: npx nx run-many -t test --parallel=2
 
-      # STEP 7 — Enforce Shell Jest coverage thresholds
-      # Statements: 80%, Branches: 75%
-      # Functions: 80%, Lines: 80%
+      # STEP 7: Build Angular applications
+      - name: Build Microfrontends
+        run: npx nx run-many -t build --parallel=2
+
+      # STEP 8: TypeScript checks
+      - name: TypeScript Quality Checks
+        run: npx nx run-many -t typecheck --parallel=2
+
+      # STEP 9: Install Playwright Chromium
+      # FIX: Browser executable was missing in GitHub Actions
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      # STEP 10: Run E2E tests
+      - name: Run Playwright E2E
+        run: npx nx run-many -t e2e --parallel=1
+
+      # STEP 11: Verify Shell Jest coverage thresholds
       - name: Verify Shell Coverage Quality Gate
         run: npx nx test commerceops-shell --coverage --runInBand --skip-nx-cache
-      # STEP 7B — Products coverage reporting
-      # ADD THIS
+
+      # STEP 12: Generate Products Jest coverage
       - name: Generate Products Coverage
         run: npx nx test commerceops-products --coverage --runInBand --skip-nx-cache
 
-      # STEP 7C — Upload Jest coverage reports
-      # ADD THIS
+      # STEP 13: Upload Jest coverage reports
       - name: Upload Jest Coverage Reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -75,7 +83,16 @@ jobs:
             coverage/commerceops-products/
           if-no-files-found: warn
           retention-days: 7
-      # STEP 8 — Nx Cloud failure analysis
-      - name: Nx Cloud CI Fix
-        if: always()
-        run: npx nx fix-ci
+
+      # STEP 14: Upload Playwright reports on failure
+      - name: Upload Playwright Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: commerceops-playwright-report
+          path: |
+            dist/.playwright/
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
