@@ -46,7 +46,7 @@
       "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "commerceops-products:build",
-        "port": 4200,
+        "port": 4201,
         "staticFilePath": "dist/commerceops-products/browser",
         "spa": true
       }

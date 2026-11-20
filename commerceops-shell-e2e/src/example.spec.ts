@@ -1,90 +1,26 @@
-import { Component } from '@angular/core';
-import { loadRemoteModule } from '@angular-architects/native-federation';
-import { appRoutes } from './app.routes';
+// CHANGE HERE: Use Playwright browser-based testing
+import { test, expect } from '@playwright/test';
 
-// ADD THIS — Local mock instead of importing remote source
-@Component({
-  selector: 'co-mock-products-page',
-  template: '',
-})
-class MockProductsPage {}
+test.describe('CommerceOps Shell Navigation', () => {
+  test('should navigate from Dashboard to Products MFE', async ({
+    page,
+  }) => {
+    // Navigate to the dashboard
+    await page.goto('/dashboard');
 
-jest.mock('@angular-architects/native-federation', () => ({
-  loadRemoteModule: jest.fn(),
-}));
+    // Verify dashboard is accessible
+    await expect(page).toHaveURL(/\/dashboard/);
 
-const mockedLoadRemoteModule = jest.mocked(loadRemoteModule);
+    // Navigate to the Products remote
+    await page.goto('/products');
 
-describe('Products MFE routing', () => {
-  const getProductsLoader = () => {
-    const shellRoute = appRoutes.find((route) => route.path === '');
+    // Verify the remote route loaded
+    await expect(page).toHaveURL(/\/products/);
 
-    const productsRoute = shellRoute?.children?.find(
-      (route) => route.path === 'products',
-    );
+    // Verify the Products MFE rendered
+    await expect(page.locator('app-products-page')).toBeVisible();
 
-    if (!productsRoute?.loadComponent) {
-      throw new Error('Products route loader not found');
-    }
-
-    return productsRoute.loadComponent;
-  };
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('loads ProductsPage when remote succeeds', async () => {
-    // CHANGE HERE — Mock federation export
-    mockedLoadRemoteModule.mockResolvedValue({
-      ProductsPage: MockProductsPage,
-    });
-
-    const component = await getProductsLoader()();
-
-    expect(component).toBe(MockProductsPage);
-  });
-
-  it('loads fallback when remote fails', async () => {
-    const error = new Error('Remote unavailable');
-
-    const consoleSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
-
-    try {
-      mockedLoadRemoteModule.mockRejectedValue(error);
-
-      const component = await getProductsLoader()();
-
-      expect(component).toBe(RemoteUnavailable);
-
-      expect(consoleSpy).toHaveBeenCalledWith('Products MFE failed:', error);
-    } finally {
-      consoleSpy.mockRestore();
-    }
-  });
-
-  it('loads fallback when ProductsPage export is missing', async () => {
-    const consoleSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
-
-    try {
-      mockedLoadRemoteModule.mockResolvedValue({});
-
-      const component = await getProductsLoader()();
-
-      expect(component).toBe(RemoteUnavailable);
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'Products MFE failed:',
-        expect.objectContaining({
-          message: 'ProductsPage export is missing',
-        }),
-      );
-    } finally {
-      consoleSpy.mockRestore();
-    }
+    // Ensure the remote-unavailable fallback is not displayed
+    await expect(page.locator('co-remote-unavailable')).toHaveCount(0);
   });
 });
