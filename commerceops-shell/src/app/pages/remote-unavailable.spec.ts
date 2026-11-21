@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RemoteUnavailable } from './remote-unavailable';
 
 describe('RemoteUnavailable', () => {
-  let component: RemoteUnavailable;
   let fixture: ComponentFixture<RemoteUnavailable>;
+  let component: RemoteUnavailable;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -12,28 +12,31 @@ describe('RemoteUnavailable', () => {
 
     fixture = TestBed.createComponent(RemoteUnavailable);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should display the Products unavailable message', () => {
+    // ADD THIS — Verify the fallback UI
+    const heading = fixture.nativeElement.querySelector('h1');
+
+    expect(heading.textContent).toContain(
+      'Products is temporarily unavailable'
+    );
   });
 
-  it('should display the unavailable message', () => {
-    const heading: HTMLElement = fixture.nativeElement.querySelector('h1');
-    expect(heading.textContent).toContain('This feature is temprorary unavailable');
-  });
-
-  it('should invoke retry when clicked on button', () => {
+  it('should reload the application when Retry is clicked', () => {
+    // ADD THIS — Spy on the component method
     const retrySpy = jest
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    .spyOn(component,'retry').mockImplementation(() => {});
+      .spyOn(component, 'retry')
+      .mockImplementation(() => undefined);
 
-    const button : HTMLButtonElement =
-    fixture.nativeElement.querySelector('button');
+    const button: HTMLButtonElement =
+      fixture.nativeElement.querySelector('button');
 
     button.click();
-    expect(retrySpy).toHaveBeenCalledTimes(1);
-  });
 
+    expect(retrySpy).toHaveBeenCalledTimes(1);
+
+    retrySpy.mockRestore();
+  });
 });

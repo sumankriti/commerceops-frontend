@@ -18,6 +18,7 @@ jest.mock('@angular-architects/native-federation', () => ({
 
 const mockedLoadRemoteModule = jest.mocked(loadRemoteModule);
 
+
 describe('Products MFE routing', () => {
   const getProductsLoader = () => {
     const shellRoute = appRoutes.find(route => route.path === '');

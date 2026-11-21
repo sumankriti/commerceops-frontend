@@ -7,7 +7,7 @@ import { Component, input } from '@angular/core';
   styleUrl: './remote-unavailable.scss',
 })
 export class RemoteUnavailable {
-  readonly featureName = input('This feature');
+  readonly featureName = input('Products');
 
   retry(): void {
     window.location.reload();
