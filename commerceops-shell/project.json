@@ -40,9 +40,7 @@
       "readyWhen": {
         "signal": true
       },
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "commerceops-shell:build",
@@ -53,9 +51,7 @@
     },
     "esbuild": {
       "executor": "@angular/build:application",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/commerceops-shell",
@@ -68,15 +64,17 @@
             "input": "commerceops-shell/public"
           }
         ],
-        "styles": [
-          "commerceops-shell/src/styles.scss"
-        ],
-        "polyfills": [
-          "es-module-shims"
-        ]
+        "styles": ["commerceops-shell/src/styles.scss"],
+        "polyfills": ["es-module-shims"]
       },
       "configurations": {
         "production": {
+          "fileReplacements": [
+            {
+              "replace": "commerceops-shell/src/main.ts",
+              "with": "commerceops-shell/src/main.prod.ts"
+            }
+          ],
           "budgets": [
             {
               "type": "initial",
